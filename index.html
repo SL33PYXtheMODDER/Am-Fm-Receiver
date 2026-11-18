@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOMA — Hardware Receiver Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: #121417;
+  --panel: #1a1e23;
+  --panel-border: #2c333d;
+  --inset-bg: #0d0f12;
+  --inset-border: #1f252d;
+  --text: #d4d8de;
+  --text-bright: #ffffff;
+  --muted: #788291;
+  --accent: #e59838;
+  --accent-glow: rgba(229, 152, 56, 0.15);
+  --green: #4ade80;
+  --red: #f87171;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.chassis{
+  width: 100%;
+  max-width: 960px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+  padding: 28px;
+}
+
+header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--panel-border);
+  padding-bottom: 18px;
+  margin-bottom: 24px;
+}
+
+.brand-group{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.device-badge{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: var(--inset-bg);
+  border: 1px solid var(--inset-border);
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+h1{
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-bright);
+  letter-spacing: -0.01em;
+}
+
+.layout{
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 20px;
+}
+
+@media(max-width: 768px){
+  .layout{grid-template-columns: 1fr}
+}
+
+.deck-section{
+  background: var(--inset-bg);
+  border: 1px solid var(--inset-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+/* Band Selector Hardware Toggle */
+.band-selector{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: var(--panel);
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid var(--panel-border);
+  margin-bottom: 16px;
+}
+
+.band-btn{
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.band-btn.active{
+  background: var(--inset-bg);
+  color: var(--accent);
+  border: 1px solid var(--inset-border);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* LCD Display Unit */
+.lcd-screen{
+  background: #080a0d;
+  border: 1px solid #181d24;
+  border-radius: 6px;
+  padding: 18px;
+  position: relative;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+  margin-bottom: 16px;
+}
+
+.lcd-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.freq-display{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.unit-label{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.station-title{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hardware Controls */
+.controls-cluster{
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.hw-btn{
+  background: linear-gradient(180deg, #232830 0%, #1a1e24 100%);
+  border: 1px solid #323a46;
+  border-bottom: 2px solid #14171d;
+  color: var(--text-bright);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 12px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: all 0.05s ease;
+}
+
+.hw-btn:hover{
+  background: linear-gradient(180deg, #2a313c 0%, #20252e 100%);
+  border-color: #3f4a5a;
+}
+
+.hw-btn:active{
+  transform: translateY(1px);
+  border-bottom-width: 1px;
+}
+
+.hw-btn.main{
+  background: linear-gradient(180deg, #d9822b 0%, #b86a1b 100%);
+  border-color: #f09e48;
+  border-bottom-color: #8c4c0d;
+  color: #fff;
+}
+
+.hw-btn.main:hover{
+  background: linear-gradient(180deg, #e68d33 0%, #c4721d 100%);
+}
+
+.hw-btn span.sub-label{
+  font-size: 9px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.hw-btn.main span.sub-label{
+  color: rgba(255,255,255,0.7);
+}
+
+/* Status Indicator */
+.status-bar{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--panel);
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--panel-border);
+  margin-bottom: 16px;
+}
+
+.led{
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 8px var(--red);
+}
+.led.active{
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+
+/* Input Fields */
+.input-group{
+  margin-bottom: 12px;
+}
+
+label{
+  display: block;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.input-row{
+  display: flex;
+  gap: 6px;
+}
+
+input[type="text"], input[type="number"]{
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  color: var(--text-bright);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  outline: none;
+}
+
+input:focus{
+  border-color: var(--accent);
+}
+
+.action-btn{
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.action-btn:hover{
+  background: var(--panel-border);
+}
+
+/* Station Browser Pane */
+.browser-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.browser-header h2{
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.channel-list{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.channel-list::-webkit-scrollbar{
+  width: 4px;
+}
+.channel-list::-webkit-scrollbar-thumb{
+  background: var(--panel-border);
+  border-radius: 2px;
+}
+
+.channel-item{
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.channel-item:hover{
+  border-color: var(--accent);
+  background: #20252e;
+}
+
+.channel-info strong{
+  font-size: 12px;
+  color: var(--text-bright);
+  font-weight: 600;
+  display: block;
+}
+
+.channel-info small{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.genre-tag{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  background: var(--inset-bg);
+  border: 1px solid var(--inset-border);
+  color: var(--muted);
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+
+footer{
+  margin-top: 20px;
+  border-top: 1px solid var(--panel-border);
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+}
+
+footer a{
+  color: var(--accent);
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+
+<div class="chassis">
+  <header>
+    <div class="brand-group">
+      <h1>NOMA RX-70</h1>
+      <span class="device-badge">HARDWARE DESK</span>
+    </div>
+    <span class="device-badge" id="latency-indicator">DSP LOCKED</span>
+  </header>
+
+  <div class="layout">
+    <!-- Left Deck: Receiver Controls -->
+    <section class="deck-section">
+      <div class="band-selector">
+        <button class="band-btn active" id="band-am" onclick="setBand('am')">AM BAND (kHz)</button>
+        <button class="band-btn" id="band-fm" onclick="setBand('fm')">FM BAND (MHz)</button>
+      </div>
+
+      <div class="lcd-screen">
+        <div class="lcd-top">
+          <div class="freq-display" id="freq">94.5</div>
+          <div class="unit-label" id="unit">MHz</div>
+        </div>
+        <div class="station-title" id="station">FBi RADIO · SYDNEY</div>
+      </div>
+
+      <div class="controls-cluster">
+        <button class="hw-btn" onclick="autoSeek('down')">◀◀<span class="sub-label">SEEK</span></button>
+        <button class="hw-btn" onclick="stepFreq(-1)"><span style="font-size:16px">-</span><span class="sub-label">TUNE</span></button>
+        <button class="hw-btn main" id="play-btn" onclick="togglePlay()">▶<span class="sub-label">POWER</span></button>
+        <button class="hw-btn" onclick="stepFreq(1)"><span style="font-size:16px">+</span><span class="sub-label">TUNE</span></button>
+        <button class="hw-btn" onclick="autoSeek('up')">▶▶<span class="sub-label">SEEK</span></button>
+      </div>
+
+      <div class="status-bar">
+        <div class="led" id="led"></div>
+        <span id="status">Standby — select a channel or input stream</span>
+      </div>
+
+      <div class="input-group">
+        <label for="frequency">Direct Frequency Tune</label>
+        <div class="input-row">
+          <input id="frequency" type="number" min="87.5" max="108.0" step="0.1" value="94.5">
+          <button class="action-btn" onclick="tuneFromInput()">SET</button>
+        </div>
+      </div>
+
+      <div class="input-group" style="margin-bottom:0">
+        <label for="stream">Direct Stream Source URL</label>
+        <div class="input-row">
+          <input id="stream" type="text" value="https://streamer.fbiradio.com/stream">
+          <button class="action-btn" onclick="connectStream()">LOAD</button>
+        </div>
+      </div>
+
+      <audio id="audio"></audio>
+    </section>
+
+    <!-- Right Deck: Station Browser -->
+    <section class="deck-section" style="display:flex;flex-direction:column;">
+      <div class="browser-header">
+        <h2 id="browser-title">Station Bank (70 Loaded)</h2>
+      </div>
+      <div class="input-group" style="margin-bottom:12px;">
+        <input id="search-input" type="text" placeholder="Filter bank..." oninput="filterStations()">
+      </div>
+      <div class="channel-list" id="station-list">
+        <!-- Injected via script -->
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <span>NOMA ANALOG-DIGITAL HYBRID DESK</span>
+    <a href="https://sl33pyxthemodder.github.io/Talker/" target="_blank" rel="noopener">Talker ↗</a>
+  </footer>
+</div>
+
+<script>
+const audio = document.getElementById('audio'),
+      freqEl = document.getElementById('freq'),
+      unitEl = document.getElementById('unit'),
+      freqInput = document.getElementById('frequency'),
+      stationEl = document.getElementById('station'),
+      statusEl = document.getElementById('status'),
+      ledEl = document.getElementById('led'),
+      playBtn = document.getElementById('play-btn'),
+      streamInput = document.getElementById('stream'),
+      btnAM = document.getElementById('band-am'),
+      btnFM = document.getElementById('band-fm'),
+      stationList = document.getElementById('station-list'),
+      searchInput = document.getElementById('search-input'),
+      browserTitle = document.getElementById('browser-title');
+
+let mode = 'fm';
+let frequency = 94.5;
+let currentIndex = 0;
+
+const stations = [
+  { name: "FBi Radio Sydney", freq: "94.5", band: "fm", tag: "Indie", stream: "https://streamer.fbiradio.com/stream" },
+  { name: "KEXP Seattle", freq: "89.9", band: "fm", tag: "Alternative", stream: "https://kexp.streamguys1.com/kexp128.mp3" },
+  { name: "WNYC FM New York", freq: "93.9", band: "fm", tag: "Public", stream: "https://fm939.wnyc.org/nyc-fm939" },
+  { name: "WQXR Classical NY", freq: "105.9", band: "fm", tag: "Classical", stream: "https://wqxr.streamguys1.com/wqxr" },
+  { name: "BBC World Service", freq: "90.3", band: "fm", tag: "News", stream: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service" },
+  { name: "SomaFM Groove Salad", freq: "102.1", band: "fm", tag: "Ambient", stream: "https://ice6.somafm.com/groovesalad-128-mp3" },
+  { name: "Linn Jazz UK", freq: "97.7", band: "fm", tag: "Jazz", stream: "https://stream.linn.co.uk/stream/linnjazz" },
+  { name: "Capital FM London", freq: "95.8", band: "fm", tag: "Pop", stream: "https://media-ice.musicradio.com/CapitalMP3" },
+  { name: "SomaFM Secret Agent", freq: "98.3", band: "fm", tag: "Lounge", stream: "https://ice2.somafm.com/secretagent-128-mp3" },
+  { name: "Radio Paradise Rock", freq: "95.1", band: "fm", tag: "Rock", stream: "https://stream.radioparadise.com/rock-128" },
+  { name: "The Current Minnesota", freq: "89.3", band: "fm", tag: "Indie", stream: "https://current.stream.publicradio.org/current.mp3" },
+  { name: "Triple J Australia", freq: "105.7", band: "fm", tag: "Alternative", stream: "https://live-radio01.mediahubaustralia.com/2TJW/mp3/" },
+  { name: "KCRW Santa Monica", freq: "89.9", band: "fm", tag: "NPR", stream: "https://kcrw.streamguys1.com/kcrw_128k_mp3_on_air" },
+  { name: "KQED San Francisco", freq: "88.5", band: "fm", tag: "Talk", stream: "https://kqed-ice.streamguys1.com/kqedradio-mp3" },
+  { name: "WBEZ Chicago", freq: "91.5", band: "fm", tag: "News", stream: "https://wbez.streamguys1.com/wbez128" },
+  { name: "SomaFM Drone Zone", freq: "104.5", band: "fm", tag: "Ambient", stream: "https://ice4.somafm.com/dronezone-128-mp3" },
+  { name: "SomaFM Def Con", freq: "107.5", band: "fm", tag: "Electronic", stream: "https://ice1.somafm.com/defcon-128-mp3" },
+  { name: "Radio Paradise Main", freq: "97.1", band: "fm", tag: "Eclectic", stream: "https://stream.radioparadise.com/mp3-128" },
+  { name: "Radio Paradise Mellow", freq: "101.3", band: "fm", tag: "Soft", stream: "https://stream.radioparadise.com/mellow-128" },
+  { name: "Linn Classical", freq: "99.5", band: "fm", tag: "Orchestral", stream: "https://stream.linn.co.uk/stream/linnclassical" },
+  { name: "Swiss Classic", freq: "100.3", band: "fm", tag: "Classical", stream: "https://stream.srg-ssr.ch/m/rsc_fr/mp3_128" },
+  { name: "KUSC Los Angeles", freq: "91.5", band: "fm", tag: "Classical", stream: "https://kusc-ice.streamguys1.com/kusc-mp3-128" },
+  { name: "WFMT Chicago", freq: "98.7", band: "fm", tag: "Arts", stream: "https://wfmt.streamguys1.com/wfmt-mp3" },
+  { name: "SomaFM Sonic Tonic", freq: "96.5", band: "fm", tag: "Dub", stream: "https://ice1.somafm.com/sonictonic-128-mp3" },
+  { name: "Sublime Netherlands", freq: "90.7", band: "fm", tag: "Funk", stream: "https://sublime.stream.radiorp.nl/sublime.mp3" },
+  { name: "Jazz24 Seattle", freq: "88.5", band: "fm", tag: "Jazz", stream: "https://live.wksu.org/jazz24" },
+  { name: "WBGO Newark", freq: "88.3", band: "fm", tag: "Jazz", stream: "https://wbgo.streamguys1.com/wbgo" },
+  { name: "SomaFM Suburbia", freq: "91.9", band: "fm", tag: "Synth", stream: "https://ice1.somafm.com/suburbia-128-mp3" },
+  { name: "SomaFM Heavy Weight", freq: "106.1", band: "fm", tag: "Reggae", stream: "https://ice2.somafm.com/reggae-128-mp3" },
+  { name: "Radio 6 Music UK", freq: "96.7", band: "fm", tag: "BBC", stream: "https://stream.live.vc.bbcmedia.co.uk/bbc_6music" },
+  { name: "FIP Radio Paris", freq: "105.1", band: "fm", tag: "Eclectic", stream: "https://icecast.radiofrance.fr/fip-midfi.mp3" },
+  { name: "FM4 Austria", freq: "103.8", band: "fm", tag: "Alternative", stream: "https://orf-live.ors-shoutcast.at/fm4-q2a" },
+  { name: "Radio Paradise World", freq: "99.1", band: "fm", tag: "World", stream: "https://stream.radioparadise.com/world-etc-128" },
+  { name: "SomaFM Boot Liquor", freq: "107.1", band: "fm", tag: "Americana", stream: "https://ice1.somafm.com/bootliquor-128-mp3" },
+  { name: "WNCW North Carolina", freq: "88.7", band: "fm", tag: "Folk", stream: "https://wncw.streamguys1.com/wncw" },
+  { name: "Heart FM London", freq: "106.2", band: "fm", tag: "Hits", stream: "https://media-ice.musicradio.com/HeartLondonMP3" },
+  { name: "SomaFM PopTron", freq: "93.1", band: "fm", tag: "Pop", stream: "https://ice1.somafm.com/poptron-128-mp3" },
+  { name: "NPO 3FM Netherlands", freq: "96.8", band: "fm", tag: "Pop", stream: "https://icecast.omroep.nl/3fm-bb-mp3" },
+  { name: "SomaFM Illinois St", freq: "540", band: "am", tag: "Oldies", stream: "https://ice1.somafm.com/illstreet-128-mp3" },
+  { name: "SomaFM Covers", freq: "620", band: "am", tag: "Covers", stream: "https://ice1.somafm.com/covers-128-mp3" },
+  { name: "SomaFM Underground 80s", freq: "730", band: "am", tag: "80s", stream: "https://ice1.somafm.com/u80s-128-mp3" },
+  { name: "SomaFM Left Coast 70s", freq: "810", band: "am", tag: "70s", stream: "https://ice1.somafm.com/seventies-128-mp3" },
+  { name: "SomaFM ThistleRadio", freq: "950", band: "am", tag: "Celtic", stream: "https://ice1.somafm.com/thistle-128-mp3" },
+  { name: "Dublab Los Angeles", freq: "99.3", band: "fm", tag: "Experimental", stream: "https://dublab.out.airtime.pro/dublab_a" },
+  { name: "NTS Radio 1 London", freq: "101.9", band: "fm", tag: "Underground", stream: "https://stream-relay-geo.ntslive.net/stream" },
+  { name: "NTS Radio 2 London", freq: "102.7", band: "fm", tag: "Eclectic", stream: "https://stream-relay-geo.ntslive.net/stream2" },
+  { name: "Resonance FM London", freq: "104.4", band: "fm", tag: "Arts", stream: "https://stream.resonance.fm/resonance" },
+  { name: "WFMU New Jersey", freq: "91.1", band: "fm", tag: "Freeform", stream: "https://stream0.wfmu.org/freeform-high" },
+  { name: "KUTX Austin", freq: "98.9", band: "fm", tag: "Austin", stream: "https://kut.streamguys1.com/kutx-free" },
+  { name: "KMHD Portland", freq: "89.1", band: "fm", tag: "Jazz", stream: "https://kmhd.streamguys1.com/kmhd-mp3" },
+  { name: "WWOZ New Orleans", freq: "90.7", band: "fm", tag: "Brass", stream: "https://wwoz-sc.streamguys1.com/wwoz-hi.mp3" },
+  { name: "KCRW Eclectic24", freq: "106.7", band: "fm", tag: "Music", stream: "https://kcrw.streamguys1.com/kcrw_128k_mp3_e24" },
+  { name: "Classical King FM", freq: "98.1", band: "fm", tag: "Classical", stream: "https://king.streamguys1.com/king-fm-mp3" },
+  { name: "BPM Dance Electro", freq: "103.1", band: "fm", tag: "EDM", stream: "https://ice1.somafm.com/cliqhop-128-mp3" },
+  { name: "Digitalis Beats", freq: "104.9", band: "fm", tag: "IDM", stream: "https://ice1.somafm.com/digitalis-128-mp3" },
+  { name: "Mission Control FM", freq: "101.1", band: "fm", tag: "NASA", stream: "https://ice1.somafm.com/missioncontrol-128-mp3" },
+  { name: "SF 10-33 Scanner", freq: "103.3", band: "fm", tag: "Scanner", stream: "https://ice1.somafm.com/sf1033-128-mp3" },
+  { name: "Spacestation Soma", freq: "105.3", band: "fm", tag: "Space", stream: "https://ice1.somafm.com/spacestation-128-mp3" },
+  { name: "Fluid Electro", freq: "97.3", band: "fm", tag: "Bass", stream: "https://ice1.somafm.com/fluid-128-mp3" },
+  { name: "Lush Trip-Hop", freq: "98.5", band: "fm", tag: "Trip-Hop", stream: "https://ice1.somafm.com/lush-128-mp3" },
+  { name: "The Trip 60s Chill", freq: "99.7", band: "fm", tag: "Psychedelic", stream: "https://ice1.somafm.com/thetrip-128-mp3" },
+  { name: "Tiki Time Lounge", freq: "100.9", band: "fm", tag: "Exotica", stream: "https://ice1.somafm.com/tiki-128-mp3" },
+  { name: "Vaporwaves Radio", freq: "101.7", band: "fm", tag: "Vaporwave", stream: "https://ice1.somafm.com/vaporwaves-128-mp3" },
+  { name: "Club 70s Disco", freq: "102.9", band: "fm", tag: "Disco", stream: "https://ice1.somafm.com/club70s-128-mp3" },
+  { name: "Heavy Metal Zone", freq: "106.9", band: "fm", tag: "Metal", stream: "https://ice1.somafm.com/metal-128-mp3" },
+  { name: "WFAN New York", freq: "660", band: "am", tag: "Sports", stream: "https://ice6.securenetsystems.net/WFANAM" },
+  { name: "WGN Chicago", freq: "720", band: "am", tag: "Talk", stream: "https://playerservices.streamtheworld.com/api/livestream-redirect/WGNAM_SC" },
+  { name: "KNX Los Angeles", freq: "1070", band: "am", tag: "News", stream: "https://playerservices.streamtheworld.com/api/livestream-redirect/KNXAM_SC" }
+];
+
+let activeList = [...stations];
+
+function renderStations(list) {
+  stationList.innerHTML = '';
+  browserTitle.textContent = `Station Bank (${list.length} Loaded)`;
+  if(list.length === 0){
+    stationList.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:12px;">No matching channels found.</div>';
+    return;
+  }
+  list.forEach((s, idx) => {
+    const card = document.createElement('div');
+    card.className = 'channel-item';
+    card.innerHTML = `
+      <div class="channel-info">
+        <strong>${s.name}</strong>
+        <small>${s.freq} ${s.band.toUpperCase()}</small>
+      </div>
+      <span class="genre-tag">${s.tag}</span>
+    `;
+    card.onclick = () => {
+      currentIndex = stations.indexOf(s);
+      playStation(s);
+    };
+    stationList.appendChild(card);
+  });
+}
+
+function filterStations(){
+  const q = searchInput.value.toLowerCase();
+  activeList = stations.filter(s => 
+    s.name.toLowerCase().includes(q) || 
+    s.tag.toLowerCase().includes(q) ||
+    s.freq.includes(q)
+  );
+  renderStations(activeList);
+}
+
+function setBand(newBand){
+  mode = newBand;
+  if(mode === 'am'){
+    btnAM.classList.add('active');
+    btnFM.classList.remove('active');
+    unitEl.textContent = 'kHz';
+    freqInput.min = '530';
+    freqInput.max = '1700';
+    freqInput.step = '10';
+    frequency = 1000;
+  } else {
+    btnFM.classList.add('active');
+    btnAM.classList.remove('active');
+    unitEl.textContent = 'MHz';
+    freqInput.min = '87.5';
+    freqInput.max = '108.0';
+    freqInput.step = '0.1';
+    frequency = 94.5;
+  }
+  updateDisplay();
+}
+
+function updateDisplay(){
+  freqEl.textContent = frequency;
+  freqInput.value = frequency;
+}
+
+function tune(val, name){
+  frequency = val;
+  updateDisplay();
+  stationEl.textContent = name ? name.toUpperCase() : 'MANUAL TUNING';
+}
+
+function playStation(s){
+  setBand(s.band);
+  tune(s.freq, s.name);
+  if(s.stream){
+    streamInput.value = s.stream;
+    audio.src = s.stream;
+    audio.load();
+    statusEl.textContent = 'Buffering stream...';
+    ledEl.classList.remove('active');
+    playBtn.innerHTML = '▶<span class="sub-label">POWER</span>';
+    
+    audio.play().then(() => {
+      playBtn.innerHTML = '❚❚<span class="sub-label">POWER</span>';
+      statusEl.textContent = `Locked: ${s.name}`;
+      ledEl.classList.add('active');
+    }).catch(() => {
+      statusEl.textContent = 'Stream ready · press play';
+    });
+  }
+}
+
+function togglePlay(){
+  if(!audio.src && streamInput.value){
+    audio.src = streamInput.value;
+    audio.load();
+  }
+  if(audio.paused){
+    audio.play().then(() => {
+      playBtn.innerHTML = '❚❚<span class="sub-label">POWER</span>';
+      statusEl.textContent = 'Receiving stream';
+      ledEl.classList.add('active');
+    }).catch(() => {
+      statusEl.textContent = 'Playback blocked or stream unavailable';
+    });
+  } else {
+    audio.pause();
+    playBtn.innerHTML = '▶<span class="sub-label">POWER</span>';
+    statusEl.textContent = 'Standby (Paused)';
+    ledEl.classList.remove('active');
+  }
+}
+
+function stepFreq(dir){
+  const step = mode === 'am' ? 10 : 0.1;
+  let val = Number(frequency) + (dir * step);
+  if(mode === 'am'){
+    frequency = Math.max(530, Math.min(1700, Math.round(val/10)*10));
+  } else {
+    frequency = Math.max(87.5, Math.min(108.0, Number(val.toFixed(1))));
+  }
+  updateDisplay();
+  stationEl.textContent = `MANUAL TUNE · ${frequency} ${unitEl.textContent}`;
+}
+
+function autoSeek(dir){
+  if(activeList.length === 0) return;
+  currentIndex = (currentIndex + (dir === 'up' ? 1 : -1) + activeList.length) % activeList.length;
+  playStation(activeList[currentIndex]);
+}
+
+function tuneFromInput(){
+  let val = Number(freqInput.value);
+  frequency = val;
+  updateDisplay();
+  stationEl.textContent = `MANUAL TUNE · ${frequency} ${unitEl.textContent}`;
+}
+
+function connectStream(){
+  const url = streamInput.value.trim();
+  if(!url) return;
+  audio.src = url;
+  audio.load();
+  statusEl.textContent = 'Source loaded · press power';
+  ledEl.classList.remove('active');
+}
+
+audio.addEventListener('ended', () => {
+  playBtn.innerHTML = '▶<span class="sub-label">POWER</span>';
+  ledEl.classList.remove('active');
+  statusEl.textContent = 'Stream ended';
+});
+
+audio.addEventListener('error', () => {
+  playBtn.innerHTML = '▶<span class="sub-label">POWER</span>';
+  ledEl.classList.remove('active');
+  statusEl.textContent = 'Stream unavailable or blocked';
+});
+
+audio.addEventListener('playing', () => {
+  ledEl.classList.add('active');
+  statusEl.textContent = 'Receiving stream';
+});
+
+// Initialize
+renderStations(stations);
+playStation(stations[0]);
+</script>
+</body>
+</html>
